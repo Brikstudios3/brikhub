@@ -27,7 +27,7 @@ function vSignin(){
         <button class="link light strong" type="submit" style="align-self:flex-start">Sign in →</button>
       </form></details>
   </div>
-  <div class="wall" data-bricks="wall" aria-hidden="true"></div>
+  <div class="wall hx-film" aria-hidden="true"><video src="film/sk-loop.mp4" poster="img2/sk-loop-poster.jpg" autoplay muted loop playsinline preload="auto"></video></div>
   </div></section>`}
 
 /* ---------- first visit from an invite: set up the profile, then in ---------- */
@@ -147,3 +147,7 @@ async function hxUpload(file){const sid=$("#hx-docsc").value,kind=$("#hx-dockind
   try{const path=await HX.uploadDoc(file,sid,kind);done();const v=JSON.parse(JSON.stringify(S.docs||{}));v[sid]=v[sid]||{};v[sid][kind]=path;S.docs=v;
     await db.doc("settings/docs").set({...v,updatedAt:new Date().toISOString()});render();toast("Uploaded. It shows on the Assets tab once published.")}
   catch(e){done();toast(e&&e.code==="too_big"?"That file is over 40MB. Use a Drive link instead.":"The upload did not go through. Try again.")}}
+
+/* ---------- no brick wall: loaders are a quiet line, the sign in plays a BRIK film ---------- */
+function mountBricks(root=document){root.querySelectorAll("[data-bricks]").forEach(el=>{el.dataset.bm="1"})
+  root.querySelectorAll(".hx-film video").forEach(v=>{v.muted=true;const p=v.play&&v.play();if(p&&p.catch)p.catch(()=>{})})}

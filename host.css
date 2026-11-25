@@ -40,3 +40,15 @@
 .hx-ok span{display:block;font-size:14.5px;color:var(--muted);margin-top:6px}
 .hx-steps{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;font-size:15px}
 .hx-steps a{color:var(--charcoal-dark)}
+
+/* sign in film in place of the brick wall */
+.signin .wall.hx-film{background:#0d0d0d}
+.signin .wall.hx-film video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.signin .wall.hx-film canvas{display:none}
+/* loaders: a fine moving line instead of bricks */
+html .bricks-mini{position:relative;width:120px;height:2px;background:rgba(127,127,127,.25);overflow:hidden}
+html .bricks-mini.lg{width:180px;height:2px}
+.bricks-mini canvas{display:none}
+html .bricks-mini::after{content:"";position:absolute;inset:0;width:40%;background:currentColor;opacity:.8;animation:hxline 1.1s ease-in-out infinite}
+@keyframes hxline{0%{transform:translateX(-100%)}100%{transform:translateX(250%)}}
+@media (prefers-reduced-motion:reduce){.bricks-mini::after{animation:none;width:100%;opacity:.5}}
