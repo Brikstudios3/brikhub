@@ -27,7 +27,7 @@ function vSignin(){
         <button class="link light strong" type="submit" style="align-self:flex-start">Sign in →</button>
       </form></details>
   </div>
-  <div class="wall hx-film" aria-hidden="true"><video src="film/sk-loop.mp4" poster="img2/sk-loop-poster.jpg" autoplay muted loop playsinline preload="auto"></video></div>
+  <div class="wall hx-film" aria-hidden="true"><video src="film/brik-loop.mp4" poster="img2/brik-loop-poster.jpg" autoplay muted loop playsinline preload="auto"></video></div>
   </div></section>`}
 
 /* ---------- first visit from an invite: set up the profile, then in ---------- */
