@@ -150,4 +150,4 @@ async function hxUpload(file){const sid=$("#hx-docsc").value,kind=$("#hx-dockind
 
 /* ---------- no brick wall: loaders are a quiet line, the sign in plays a BRIK film ---------- */
 function mountBricks(root=document){root.querySelectorAll("[data-bricks]").forEach(el=>{el.dataset.bm="1"})
-  root.querySelectorAll(".hx-film video").forEach(v=>{v.muted=true;const p=v.play&&v.play();if(p&&p.catch)p.catch(()=>{})})}
+  root.querySelectorAll(".hx-film video,video.hfilm").forEach(v=>{v.muted=true;const p=v.play&&v.play();if(p&&p.catch)p.catch(()=>{})})}

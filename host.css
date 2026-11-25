@@ -52,3 +52,8 @@ html .bricks-mini.lg{width:180px;height:2px}
 html .bricks-mini::after{content:"";position:absolute;inset:0;width:40%;background:currentColor;opacity:.8;animation:hxline 1.1s ease-in-out infinite}
 @keyframes hxline{0%{transform:translateX(-100%)}100%{transform:translateX(250%)}}
 @media (prefers-reduced-motion:reduce){.bricks-mini::after{animation:none;width:100%;opacity:.5}}
+
+/* portal home banner: the BRIK film, as on the website */
+.dhero>video.hfilm{display:block;width:100%;height:min(82vh,820px);min-height:440px;object-fit:cover;background:#0d0d0d}
+@media (max-width:760px){.dhero>video.hfilm{height:70vh;min-height:380px}}
+.dhero .hweb{display:inline-block;margin-top:22px;color:#fff}
