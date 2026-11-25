@@ -69,6 +69,9 @@ H.lastInvite=()=>LS.get(INVITE_KEY,null);
 H.signOut=()=>{const s=LS.get(SESSION_KEY,null);if(s&&s.invite)LS.set("brikhub.lastagent",s);SS.del(PW_KEY)};
 
 /* ---------- GitHub publishing (admin) ---------- */
+/* agents only see the floors in their allocation */
+const AGENT_FLOORS={"print-house":["Ground","4th"]};
+function floorOk(u){const f=AGENT_FLOORS[u.scheme];return !f||f.includes(u.floor)}
 function listedFor(u,L){const x=(L[u.scheme]||{}).units;if(x&&Object.prototype.hasOwnProperty.call(x,u.id))return !!x[u.id];return /^available$/i.test(String(u.status||"").trim())}
 async function gh(method,path,body){const t=H.admin&&H.admin.token;if(!t)throw Object.assign(new Error("no token"),{code:"no_token"});
   const r=await fetch(`https://api.github.com/repos/${REPO.owner}/${REPO.repo}${path}`,{method,headers:{Authorization:"Bearer "+t,Accept:"application/vnd.github+json","X-GitHub-Api-Version":"2022-11-28"},body:body?JSON.stringify(body):undefined});
@@ -98,7 +101,7 @@ H.publish=async(extraFiles=[],msg)=>{if(publishing){clearTimeout(pubTimer);pubTi
   try{let a;try{a=await latestAdmin();a.token=a.token||H.admin.token}catch(e){if(e.code==="bad_token")throw e;a=clone(H.admin)}
     ops.forEach(op=>applyOp(a,op));
     const L=a.listing||{};const K=ub64(a.K);const key=await rawKey(K);
-    const hide=typeof HIDDEN_SCHEMES!=="undefined"?HIDDEN_SCHEMES:[];const listed=(a.units||[]).filter(u=>!hide.includes(u.scheme)&&listedFor(u,L));
+    const hide=typeof HIDDEN_SCHEMES!=="undefined"?HIDDEN_SCHEMES:[];const listed=(a.units||[]).filter(u=>!hide.includes(u.scheme)&&floorOk(u)&&listedFor(u,L));
     const pubListing={};listed.forEach(u=>{(pubListing[u.scheme]=pubListing[u.scheme]||{units:{}}).units[u.id]=true});
     const priv=await seal(key,enc.encode(JSON.stringify({units:listed,listing:pubListing,bank:a.bank||null,at:new Date().toISOString()})));
     const invites={};for(const iv of (a.invites||[]).filter(x=>!x.revoked))invites[await sha(iv.code)]=await wrapK(iv.code,K);

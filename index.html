@@ -858,6 +858,12 @@ body::before{background:#fff}
 .mstep b{font:300 22px/1.2 var(--title);color:var(--charcoal-dark)}
 .mstep span{font-size:13px;color:var(--muted);margin-left:auto}
 .mprev{background:#fff;border:1px solid var(--rule);box-shadow:0 12px 34px rgba(0,0,0,.07);border-radius:2px;overflow:hidden;font-size:14.5px;color:#2b2b2b}
+.mprev .minbox{padding:14px 18px 12px;border-bottom:1px solid var(--rule);background:#fafafa}
+.mprev .mrow{display:flex;gap:10px;align-items:center;font-size:13px;color:var(--charcoal-dark)}
+.mprev .mrow b{font-weight:500}.mprev .mrow i{font-style:normal;color:var(--muted)}.mprev .mrow small{display:block;color:var(--muted);font-size:12px;margin-top:2px}
+.mprev .mav{flex:none;width:32px;height:32px;border-radius:50%;background:var(--charcoal-darkest);color:#fff;display:grid;place-items:center;font-size:12px;letter-spacing:.04em}
+.mprev .msubj{font:400 17px/1.3 var(--title);color:var(--charcoal-dark);margin-top:12px}
+.mprev .msnip{font-size:12.5px;color:var(--muted);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .mprev .msub{padding:12px 16px;border-bottom:1px solid var(--rule);font-size:12.5px;color:var(--muted);background:#fafafa}
 .mprev .msub b{color:var(--charcoal-dark);font-weight:500}
 .mprev .mlogo{padding:16px 22px;min-height:58px;display:flex;align-items:center}
@@ -1195,10 +1201,7 @@ function vStore(){
   ${vToolkit()}
   ${talkBand("Talk a client through any scheme")}
   
-  <section class="band dark"><div class="wrap">
-    <div class="secthead"><div><div class="eyebrow">Stockport</div><h2>The place we build</h2></div></div>
-    <div class="mosaic">${place.map(([k,c],i)=>`<figure class="m${i+1}"><img src="img2/${k}.jpg" alt="${esc(c)}" loading="lazy"><figcaption>${esc(c)}</figcaption></figure>`).join("")}</div>
-  </div></section></main>`;
+</main>`;
 }
 
 function iCard(p){
@@ -1397,7 +1400,7 @@ function pOverview(sc,st){
     <ul class="chev">${w.facts.map(x=>`<li>${esc(x)}</li>`).join("")}<li>${esc(sc.sizes)}, ${esc(sc.beds)}</li><li>${esc(sc.developer)}${sc.architect?", architect "+esc(sc.architect):""}</li></ul>
   </div></section>
   ${w.film?`<section class="band white"><div class="wrap film">
-    <div><div class="eyebrow">The film</div><h2 style="font-size:clamp(30px,3.4vw,45px);margin-top:14px">${esc(sc.name)}, in motion</h2><p class="muted" style="margin-top:12px">${esc(w.filmNote)}</p>${downloads?`<button class="link" type="button" data-doc="film" style="margin-top:10px">Download the film ↓</button>`:""}</div>
+    <div><div class="eyebrow">The film</div><h2 style="font-size:clamp(30px,3.4vw,45px);margin-top:14px">${esc(sc.name)}, in motion</h2><p class="muted" style="margin-top:12px">${esc(w.filmNote)}</p></div>
     <video src="${w.film}" poster="${w.filmPoster}" controls playsinline preload="none"></video>
   </div></section>`:(w.mid?`<section class="media-l">${w.mid.video?`<video src="${w.mid.video}" poster="${w.mid.poster}" autoplay muted loop playsinline preload="none"></video>`:`<img src="${im(w.mid.img)}" alt="" loading="lazy">`}<span class="mcap">${esc(w.mid.cap)}</span></section>`:"")}
   <section class="media-m"><div class="wrap"><img src="${im(w.midImg)}" alt="${esc(sc.name)} interior" loading="lazy"></div></section>
@@ -1696,7 +1699,7 @@ const RESV_FORM={"charter-house":{
 /* ============ RETURNS MODEL (after the Charter House ROI Calculator workbook) ============ */
 const SDLT_BANDS=[[125000,0],[250000,.02],[925000,.05],[1500000,.10],[Infinity,.12]];
 function sdlt(p,o){const add=(o.buyer==="additional"?.05:0)+(o.nonUK?.02:0);let t=0,prev=0;for(const [cap,r] of SDLT_BANDS){if(p>prev)t+=(Math.min(p,cap)-prev)*(r+add);prev=cap}return Math.round(t)}
-const ASSUME0={ltv:70,rate:4.5,capGrowth:4,rentGrowth:4,uplift:3,mgmt:12,legal:1950,buyer:"additional",nonUK:false};
+const ASSUME0={ltv:75,rate:4.5,capGrowth:4,rentGrowth:4,uplift:3,mgmt:12,legal:1950,buyer:"additional",nonUK:false};
 function fin(u,o){
   if(!u)return null;o={...ASSUME0,...(o||{})};
   const R=o.rent!=null&&o.rent!==""?+o.rent:rentFor(u);if(!R)return null;
@@ -2233,7 +2236,7 @@ S.docs={};
 const PARTNERS0=[
  {id:"fowler",cat:"Mortgages",name:"Fowler Smith",firm:"Fowler Smith Mortgages & Protection",role:"The broker BRIK uses for its own mortgages and protection.",phone:"01206 635 550",email:"info@fowlersmith.co.uk",addr:"First Floor, 145 High Street, Colchester CO1 1PG",web:"https://www.fowlersmith.co.uk",track:true,
   reg:"Fowler Smith Mortgages & Protection Ltd is an appointed representative of Mortgage Intelligence Limited, which is authorised and regulated by the Financial Conduct Authority under number 305330. Your home may be repossessed if you do not keep up repayments on your mortgage."},
- {id:"rfb",cat:"Conveyancing",name:"Zorka Sara Schallinger",firm:"Ronald Fletcher Baker",logo:"img2/rfb-logo.webp",logoFit:"light",role:"Buyer's solicitor on Charter House. Knows the scheme and the contract pack.",phone:"0161 696 7989",email:"z.schallinger@rfblegal.co.uk",addr:"111 Piccadilly, Manchester M1 2HY"},
+ {id:"rfb",cat:"Conveyancing",name:"Jawaad Alam",firm:"Ronald Fletcher Baker",logo:"img2/rfb-logo.webp",logoFit:"light",role:"Every BRIK buyer uses Ronald Fletcher Baker unless they agree otherwise with BRIK. Jawaad is the point of contact for any question on legals and has the legal fee sheet.",phone:"0161 564 9225",email:"hello@floc-living.com"},
  {id:"floc",cat:"Lettings and management",name:"Jawaad Alam",firm:"FLOC",logo:"img2/floc-mark.jpg",role:"FLOC finds the tenant, moves them in, collects the rent through Goodlord and looks after the home. As landlords themselves, they treat every home like their own.",phone:"0161 564 9225",email:"hello@floc-living.com",hours:"Monday to Friday, 9am to 5pm",
   fees:[["Lettings and management","10% plus VAT"]],brochure:"docs/floc-residents-guide.pdf",brochureLabel:"Residents guide"},
  {id:"pfr",cat:"Furniture",name:"Ruth Chamberlain",firm:"Project Furniture",logo:"img2/pfr-logo.webp",logoFit:"dark",role:"Client Services Account Manager. Furniture packs for rental apartments, so a unit is ready to let from completion.",phone:"07729 096116",tel2:"01422 322662",email:"Ruth.Chamberlain@projectFR.co.uk",addr:"Harrier House, 2 Lumsdale Road, Stretford, Manchester M32 0UT",web:"https://www.projectfr.co.uk"},
@@ -2316,8 +2319,6 @@ function docCards(sc,u){const ok=!!(u&&fin(u,assumeFor(u)));const w=WEB[sc.id];c
    {k:"pricelist",t:"Price list",d:"Every available unit with rent, yield and returns, on one landscape page.",img:im(1),tag:"Your branding",mode:"doc"},
    {k:"contract",t:"Draft contract pack",d:"The draft contract, lease and supporting documents for the buyer's solicitor.",img:im(4),tag:L.contract?"Ready":"On request",mode:L.contract?"url":"req",href:L.contract||reqUrl(sc,"draft contract pack")},
    {k:"title",t:"Report on title",d:"The solicitor's report on title for the development.",img:im(sc.images.length-1),tag:L.title?"Ready":"On request",mode:L.title?"url":"req",href:L.title||reqUrl(sc,"report on title")},
-   {k:"solicitor",t:"Confirmation of lawyer",d:"For your buyer to confirm their solicitor, with the unit and buyer already filled in.",img:"img2/pl-archstreet.jpg",tag:"Your branding",mode:"doc"},
-   {k:"quote",t:"Lawyer quote",d:(()=>{const p=S.partners.find(x=>x.cat==="Conveyancing"&&x.email);return p?`Ask ${p.firm} (${p.email}) for a conveyancing quote, with the unit and price already written.`:"Ask our panel solicitor for a conveyancing quote, with the unit and price already written."})(),img:im(3),tag:"Email",mode:quoteHref(sc,u)?"mail":"req",href:quoteHref(sc,u)||reqUrl(sc,"conveyancing quote"),go:"Request a quote"},
    {k:"sdlt",t:"Stamp duty calculator",d:"First time buyer, home mover, additional home and overseas. Print the calculation.",img:"img2/pl-market.jpg",tag:"Calculator",mode:"sd",href:"#stamp-duty"},
    {k:"mailers",t:"Mail shots",d:"Three emails for your database: the introduction, the details and the final call.",img:"img2/pl-inter.jpg",tag:"3 emails",mode:"link",href:"#mailers-"+sc.id},
    {k:"partners",t:"Mortgage and legal partners",d:"The brokers and solicitors we trust, with their direct details.",img:"img2/pl-resto.jpg",tag:"Partners",mode:"link",href:"#partners"}];
@@ -2494,10 +2495,34 @@ function mailCopy(k,sc,n){const f=mailFacts(sc);const w=WEB[sc.id]||{};const uni
     cta:"Reply today to hold one.",btn:"Reserve a unit",fine:"Subject to contract and availability."}}
 function mailText(m){const b=brandNow();const tiles=m.tiles?"\n\n"+m.tiles.map(([a,v])=>a+": "+v).join("\n"):"";
   return `Hello,\n\n${m.paras.join("\n\n")}${tiles}\n\n${m.cta}\n\nKind regards,\n${[b.consultant,b.company,b.phone,b.email].filter(Boolean).join("\n")}${m.fine?"\n\n"+m.fine:""}`}
+function mailHtml(m){const b=brandNow();const base=location.href.split("#")[0].replace(/[^/]*$/,"");const abs=u=>/^https?:/.test(u)?u:base+u;
+  const e=esc,F="font-family:Helvetica,Arial,sans-serif;";const ink="#1f1d1b",mut="#7a736c",rule="#e6e1dc";
+  const logo=b.logo&&/^https?:/.test(b.logo)?`<img src="${e(b.logo)}" alt="${e(b.company||"")}" style="max-height:34px;max-width:170px">`:`<span style="${F}font-size:17px;color:${ink}">${e(b.company||b.consultant||"")}</span>`;
+  const tiles=m.tiles?`<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid ${ink};margin-top:18px">${m.tiles.reduce((r,t,i)=>(i%2?r[r.length-1].push(t):r.push([t]),r),[]).map(row=>`<tr>${row.map(([a,v])=>`<td width="50%" style="padding:10px 10px 10px 0;border-bottom:1px solid ${rule};vertical-align:top"><div style="${F}font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:${mut}">${e(a)}</div><div style="${F}font-size:18px;color:${ink};margin-top:4px">${e(v)}</div></td>`).join("")}</tr>`).join("")}</table>`:"";
+  return `<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border-collapse:collapse">
+<tr><td style="padding:18px 26px">${logo}</td></tr>
+<tr><td><img src="${e(abs(m.img))}" width="600" alt="" style="display:block;width:100%;max-width:600px;height:auto;border:0"></td></tr>
+<tr><td style="padding:26px">
+<div style="${F}font-size:28px;line-height:1.1;color:${ink};font-weight:300">${e(m.headline)}</div>
+${m.addr?`<div style="${F}font-size:13px;color:${mut};margin-top:6px">${e(m.addr)}</div>`:""}
+<div style="${F}font-size:15px;line-height:1.55;color:#2b2b2b;margin-top:14px">Hello,</div>
+${m.paras.map(p=>`<div style="${F}font-size:15px;line-height:1.55;color:#2b2b2b;margin-top:12px">${e(p)}</div>`).join("")}
+${tiles}
+<div style="${F}font-size:15px;line-height:1.55;color:#2b2b2b;margin-top:16px">${e(m.cta)}</div>
+${b.email?`<table role="presentation" cellpadding="0" cellspacing="0" style="margin-top:18px"><tr><td style="background:#141210;padding:13px 18px"><a href="mailto:${e(b.email)}?subject=${encodeURIComponent("Re: "+m.subject)}" style="${F}font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:#ffffff;text-decoration:none">${e(m.btn)}</a></td></tr></table>`:""}
+<div style="${F}font-size:14px;line-height:1.5;color:#2b2b2b;margin-top:20px;padding-top:14px;border-top:1px solid ${rule}">Kind regards,<br><b>${e(b.consultant||"")}</b><br>${e([b.company,b.phone,b.email].filter(Boolean).join(" · "))}</div>
+${m.fine?`<div style="${F}font-size:11px;color:${mut};margin-top:12px;line-height:1.45">${e(m.fine)}</div>`:""}
+</td></tr></table>`}
+async function copyMail(m){const html=mailHtml(m),text=mailText(m);
+  try{await navigator.clipboard.write([new ClipboardItem({"text/html":new Blob([html],{type:"text/html"}),"text/plain":new Blob([text],{type:"text/plain"})})]);return true}
+  catch(e){try{const d=document.createElement("div");d.innerHTML=html;d.style.cssText="position:fixed;left:-9999px;top:0";document.body.appendChild(d);const r=document.createRange();r.selectNodeContents(d);const sl=getSelection();sl.removeAllRanges();sl.addRange(r);const ok=document.execCommand("copy");sl.removeAllRanges();d.remove();if(ok)return true}catch(x){}
+    copyText("Subject: "+m.subject+"\n\n"+text,"Email copied as text");return false}}
 function mPrev(k,sc,n){const m=mailCopy(k,sc,n);const b=brandNow();const t=mailText(m);
   const gm="https://mail.google.com/mail/?view=cm&fs=1&su="+encodeURIComponent(m.subject)+"&body="+encodeURIComponent(t);const ol="https://outlook.office.com/mail/deeplink/compose?subject="+encodeURIComponent(m.subject)+"&body="+encodeURIComponent(t);
   return `<div><div class="mstep"><i>0${k}</i><b>${esc(m.step)}</b><span>${esc(m.when)}</span></div>
-   <div class="mprev"><div class="msub">Subject: <b>${esc(m.subject)}</b></div>
+   <div class="mprev"><div class="minbox">
+     <div class="mrow"><span class="mav">${esc(initials(b.consultant||b.company||"You"))}</span><div><b>${esc(b.consultant||b.company||"Your name")}</b>${b.email?` <i>&lt;${esc(b.email)}&gt;</i>`:""}<small>to your client</small></div></div>
+     <div class="msubj">${esc(m.subject)}</div><div class="msnip">${esc(m.paras[0].slice(0,110))}…</div></div>
     <div class="mlogo">${b.logo?`<img src="${b.logo}" alt="">`:`<span>${esc(b.company||b.consultant||"Your company")}</span>`}</div>
     <div class="mimg"><img src="${m.img}" alt="" loading="lazy"></div>
     <div class="mbody"><h3>${esc(m.headline)}</h3>${m.addr?`<div class="maddr">${esc(m.addr)}</div>`:""}
@@ -2506,10 +2531,10 @@ function mPrev(k,sc,n){const m=mailCopy(k,sc,n);const b=brandNow();const t=mailT
      <p>${esc(m.cta)}</p><span class="mbtn">${esc(m.btn)}</span>
      <div class="msign"><b>${esc(b.consultant||"Your name")}</b><br>${esc([b.company,b.phone,b.email].filter(Boolean).join(" · ")||"Add your details in your profile")}</div>
      ${m.fine?`<div class="mfine">${esc(m.fine)}</div>`:""}</div></div>
-   <div class="macts"><button class="wa solid2" type="button" data-act="mcopy" data-k="${k}">Copy email</button><a class="wa" href="${esc(gm)}" target="_blank" rel="noopener">Gmail</a><a class="wa" href="${esc(ol)}" target="_blank" rel="noopener">Outlook</a><button class="wa" type="button" data-act="mprint" data-k="${k}">Print PDF</button></div></div>`}
+   <div class="macts"><button class="wa solid2" type="button" data-act="mcopy" data-k="${k}">Copy email</button><button class="wa" type="button" data-act="mopen" data-to="gmail" data-k="${k}">Gmail</button><button class="wa" type="button" data-act="mopen" data-to="outlook" data-k="${k}">Outlook</button><button class="wa" type="button" data-act="mprint" data-k="${k}">Print PDF</button></div></div>`}
 function vMailers(id){if(id&&SCH[id])S.mail.sid=id;const sc=SCH[S.mail.sid]||SCHEMES[0];const n=S.mail.n;const b=brandNow();
   return `<main>
-  <section class="thero"><img src="img2/pl-inter.jpg" alt="Stockport Interchange at night"><div class="cap"><div class="wrap"><div class="chips2">${chip("Mail shots","lt")}</div><h1>Three emails, ready to send.</h1><p>Written for your own database and signed by you. Copy them into your email, or print them as PDFs with your logo.</p></div></div></section>
+  <section class="thero"><img src="img2/pl-inter.jpg" alt="Stockport Interchange at night"><div class="cap"><div class="wrap"><div class="chips2">${chip("Mail shots","lt")}</div><h1>Three emails, ready to send.</h1><p>Written for your own database and signed by you. Each one shows exactly what your client receives. Copy it, or open Gmail or Outlook, and paste: the photos come with it.</p></div></div></section>
   <section class="band"><div class="wrap">
    <div class="mctl">
     <div class="fgroup"><span>Scheme</span><div class="chipset" role="group" aria-label="Scheme">${SCHEMES.map(s=>`<button type="button" data-act="msch" data-sid="${s.id}" aria-pressed="${s.id===sc.id}">${esc(s.name)}</button>`).join("")}</div></div>
@@ -2598,7 +2623,9 @@ document.addEventListener("click",e=>{const t=e.target.closest("[data-act]");if(
   else if(a==="sdcopy")copyText(sdSummary(),"Figures copied");
   else if(a==="sdpre"){if(t.dataset.price){S.sd.price=t.dataset.price;S.sd.label=t.dataset.label||"";S.sd.unitId=""}}
   else if(a==="msch"){location.hash="mailers-"+t.dataset.sid}
-  else if(a==="mcopy"){const m=mailCopy(+t.dataset.k,SCH[S.mail.sid],S.mail.n);copyText("Subject: "+m.subject+"\n\n"+mailText(m),"Email copied, subject first")}
+  else if(a==="mcopy"){const m=mailCopy(+t.dataset.k,SCH[S.mail.sid],S.mail.n);copyMail(m).then(ok=>toast(ok?"Email copied with photos. Paste it into a new message.":"Email copied as text"))}
+  else if(a==="mopen"){const m=mailCopy(+t.dataset.k,SCH[S.mail.sid],S.mail.n);const w=window.open(t.dataset.to==="gmail"?"https://mail.google.com/mail/?view=cm&fs=1&su="+encodeURIComponent(m.subject):"https://outlook.office.com/mail/deeplink/compose?subject="+encodeURIComponent(m.subject),"_blank");
+    copyMail(m).then(ok=>toast(ok?"Subject is filled in. Click into the message and paste: the email arrives with its photos.":"Subject is filled in. Paste the email into the message."))}
   else if(a==="mprint")printMail(+t.dataset.k);
   else if(a==="pcopy"){const p=S.partners.find(x=>x.id===t.dataset.id);if(p)copyText([p.name,p.firm,p.phone,p.email,p.addr].filter(Boolean).join("\n"),"Details copied")}
   else if(a==="pcopylink"){const p=S.partners.find(x=>x.id===t.dataset.id);if(p)copyText(trackUrl(p),"Referral link copied")}
