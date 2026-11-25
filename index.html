@@ -1037,6 +1037,8 @@ const SCHEMES=[
    ["What rent could an investor expect?","BRIK estimates £950 pcm for a 1 bed apartment. There is no rent estimate for the houses yet; ask the BRIK team."],
    ["Who is the developer?","Ascot Hyde Ltd."]]}
 ];
+const HIDDEN_SCHEMES=["charter-house"];
+for(const id of HIDDEN_SCHEMES){const k=SCHEMES.findIndex(s=>s.id===id);if(k>=0)SCHEMES.splice(k,1)}
 const SCH=Object.fromEntries(SCHEMES.map(s=>[s.id,s]));
 const ROLES=["Agent","Introducer","Wealth Manager","Partner","BRIK Admin"];
 /* Insights published on brik-studios.com (Sanity, read 15 Nov 2026). Text verbatim; imagery from the BRIK library. */
@@ -1128,13 +1130,14 @@ const unitsOf=(sid,o={})=>Object.values(S.units).filter(u=>u.scheme===sid&&(o.al
 /* ============ ROUTING ============ */
 function route(){const h=(location.hash||"").slice(1);if(!S.session)return {v:"signin"};
   if(h==="admin")return {v:S.isAdmin&&S.session.role==="BRIK Admin"?"admin":"store"};
-  if(h==="insights")return {v:"insights"};
   if(h==="profile")return {v:"profile"};if(h==="toolkit"||h==="stamp-duty")return {v:"tools",t:"sdlt"};if(h==="mortgage-calculator")return {v:"tools",t:"mortgage"};if(h==="capital-growth")return {v:"tools",t:"growth"};if(h==="roi-calculator")return {v:"tools",t:"roi"};if(h==="partners")return {v:"partners"};
   if(h==="mailers"||h.startsWith("mailers-"))return {v:"mailers",id:h.slice(8)||undefined};
   if(SCH[h])return {v:"scheme",id:h};return {v:"store"}}
 window.addEventListener("hashchange",()=>{if(location.hash!=="#insights")S.icat="All";S.drawer=null;S.tab="info";S.filters={beds:"all",floor:"all",status:"all"};S.lastRes=null;render();window.scrollTo(0,0)});
 
 /* ============ RENDER ============ */
+function toTabs(){const t=$(".tabs"),p=t&&t.nextElementSibling;if(!p){window.scrollTo(0,0);return}
+  const top=p.getBoundingClientRect().top+window.scrollY-t.offsetHeight-(parseFloat(getComputedStyle(t).top)||0);window.scrollTo(0,Math.max(0,top))}
 function render(){
   const r=route();const app=$("#app");
   const focusId=document.activeElement&&document.activeElement.id;
@@ -1191,12 +1194,9 @@ function vStore(){
   </div></section>
   ${vToolkit()}
   ${talkBand("Talk a client through any scheme")}
-  <section class="band white"><div class="wrap">
-    <div class="secthead"><div><div class="eyebrow">Insights</div><h2>Latest from BRIK</h2></div><a class="link" href="#insights">All insights →</a></div>
-    <div class="icards">${latest.map(iCard).join("")}</div>
-  </div></section>
+  
   <section class="band dark"><div class="wrap">
-    <div class="secthead"><div><div class="eyebrow">Stockport</div><h2>The place we build</h2></div><button class="link" type="button" data-icat-go="Stockport">Read about Stockport →</button></div>
+    <div class="secthead"><div><div class="eyebrow">Stockport</div><h2>The place we build</h2></div></div>
     <div class="mosaic">${place.map(([k,c],i)=>`<figure class="m${i+1}"><img src="img2/${k}.jpg" alt="${esc(c)}" loading="lazy"><figcaption>${esc(c)}</figcaption></figure>`).join("")}</div>
   </div></section></main>`;
 }
@@ -1340,7 +1340,6 @@ function vHeader(r){
      <a href="#portfolio" ${r.v==="store"||r.v==="scheme"?'aria-current="page"':""}>Portfolio</a>
      <a href="#toolkit" ${r.v==="tools"||r.v==="mailers"?'aria-current="page"':""}>Toolkit</a>
      <a href="#partners" ${r.v==="partners"?'aria-current="page"':""}>Partners</a>
-     <a href="#insights" ${r.v==="insights"?'aria-current="page"':""}>Insights</a>
      ${s.role==="BRIK Admin"&&S.isAdmin?`<a href="#admin" ${r.v==="admin"?'aria-current="page"':""}>Admin</a>`:""}
    </nav>
    <div class="who">${S.brand.logo?`<img class="blogo" src="${S.brand.logo}" alt="">`:me&&me.avatarUrl?`<img src="${esc(me.avatarUrl)}" alt="">`:""}<div class="wtxt"><b>${esc(s.name)}</b><small>${esc(s.role)}${s.company?" · "+esc(s.company):""}</small></div><a class="pfl" href="#profile" ${r.v==="profile"?'aria-current="page"':""}>Profile</a><button id="signout" type="button">Sign out</button></div>
@@ -1523,7 +1522,7 @@ function bind(r){
     S.session={name,company,email,role,at:Date.now()};store.set("session",S.session);store.set("lastSignin",{name,company,email,role});
     if(location.hash!=="#portfolio")location.hash="portfolio";else render();window.scrollTo(0,0)});
   const so=$("#signout");if(so)so.onclick=()=>{HUB.signOut();S.session=null;S.client=newClient();S.rentOverride={};store.del("session");S.drawer=null;location.hash="";render()};
-  document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{S.tab=b.dataset.tab;render();const t=$(".tabs");if(t)t.scrollIntoView({block:"start"})});
+  document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{S.tab=b.dataset.tab;render();toTabs()});
   document.querySelectorAll("[data-beds]").forEach(b=>b.onclick=()=>{S.filters.beds=b.dataset.beds;render()});
   const ff=$("#f-floor");if(ff)ff.onchange=()=>{S.filters.floor=ff.value;render()};
   const fs=$("#f-status");if(fs)fs.onchange=()=>{S.filters.status=fs.value;render()};
@@ -2173,7 +2172,7 @@ async function runDoc(kind,unitId){
 function bindHub(){
   document.querySelectorAll("[data-doc]").forEach(b=>b.onclick=()=>runDoc(b.dataset.doc));
   document.querySelectorAll("[data-qdoc]").forEach(b=>b.onclick=e=>{e.stopPropagation();runDoc(b.dataset.qdoc,b.dataset.u)});
-  const pz=$("#dr-personalise");if(pz)pz.onclick=()=>{S.selUnit=S.drawer.id;S.drawer=null;S.tab="assets";render();const t=$(".tabs");t&&t.scrollIntoView({block:"start"})};
+  const pz=$("#dr-personalise");if(pz)pz.onclick=()=>{S.selUnit=S.drawer.id;S.drawer=null;S.tab="assets";render();toTabs()};
   document.querySelectorAll(".acc details").forEach(dt=>dt.addEventListener("toggle",()=>{if(!dt.open)return;dt.parentElement.querySelectorAll("details").forEach(o=>{if(o!==dt)o.open=false});const im=dt.closest("[data-acc]").querySelector("[data-accimg]");if(im)im.src=dt.dataset.img}));
   const sum=()=>{const el=$("#hubSum");if(el)el.innerHTML=sumHTML(S.units[S.selUnit])};
   document.querySelectorAll("[data-brand]").forEach(i=>i.addEventListener("input",()=>{S.brand[i.dataset.brand]=i.value.trim();saveBrand()}));
@@ -2229,17 +2228,17 @@ QUESTION: ${q}`;
 const NUMKINDS={proposal:1,numbers:1,pricelist:1};
 Object.assign(DOCNAME,{pricelist:"price list",solicitor:"solicitor confirmation",sdlt:"stamp duty calculation",mailer:"mail shot"});
 S.sd={price:"",type:"additional",overseas:false,label:""};
-S.mail={sid:"charter-house",n:5};
+S.mail={sid:SCHEMES[0].id,n:5};
 S.docs={};
 const PARTNERS0=[
- {id:"fowler",cat:"Mortgages",name:"Tara",firm:"Fowler Smith Mortgages & Protection",role:"Your best first contact at Fowler Smith, the broker BRIK uses for its own mortgages and protection.",phone:"01206 635 550",email:"tjohn@fowlersmith.co.uk",addr:"First Floor, 145 High Street, Colchester CO1 1PG",web:"https://www.fowlersmith.co.uk",track:true,
+ {id:"fowler",cat:"Mortgages",name:"Fowler Smith",firm:"Fowler Smith Mortgages & Protection",role:"The broker BRIK uses for its own mortgages and protection.",phone:"01206 635 550",email:"info@fowlersmith.co.uk",addr:"First Floor, 145 High Street, Colchester CO1 1PG",web:"https://www.fowlersmith.co.uk",track:true,
   reg:"Fowler Smith Mortgages & Protection Ltd is an appointed representative of Mortgage Intelligence Limited, which is authorised and regulated by the Financial Conduct Authority under number 305330. Your home may be repossessed if you do not keep up repayments on your mortgage."},
  {id:"rfb",cat:"Conveyancing",name:"Zorka Sara Schallinger",firm:"Ronald Fletcher Baker",logo:"img2/rfb-logo.webp",logoFit:"light",role:"Buyer's solicitor on Charter House. Knows the scheme and the contract pack.",phone:"0161 696 7989",email:"z.schallinger@rfblegal.co.uk",addr:"111 Piccadilly, Manchester M1 2HY"},
  {id:"floc",cat:"Lettings and management",name:"Jawaad Alam",firm:"FLOC",logo:"img2/floc-mark.jpg",role:"FLOC finds the tenant, moves them in, collects the rent through Goodlord and looks after the home. As landlords themselves, they treat every home like their own.",phone:"0161 564 9225",email:"hello@floc-living.com",hours:"Monday to Friday, 9am to 5pm",
   fees:[["Lettings and management","10% plus VAT"]],brochure:"docs/floc-residents-guide.pdf",brochureLabel:"Residents guide"},
  {id:"pfr",cat:"Furniture",name:"Ruth Chamberlain",firm:"Project Furniture",logo:"img2/pfr-logo.webp",logoFit:"dark",role:"Client Services Account Manager. Furniture packs for rental apartments, so a unit is ready to let from completion.",phone:"07729 096116",tel2:"01422 322662",email:"Ruth.Chamberlain@projectFR.co.uk",addr:"Harrier House, 2 Lumsdale Road, Stretford, Manchester M32 0UT",web:"https://www.projectfr.co.uk"},
  {id:"cowgills",cat:"Limited company, tax and accountancy",name:"Stockport office",firm:"Cowgills",logo:"img2/cowgills-logo.webp",logoFit:"light",role:"Accountants and tax advisers for buyers purchasing through a limited company. Free parking on site.",phone:"0161 456 9666",addr:"2 Station View, Rhino Court, Bramhall Moor Lane, Hazel Grove SK7 5ER",web:"https://www.cowgills.co.uk/contact-us/stockport-office/"}];
-const PFIX={fowler:{name:"Tara",role:"Your best first contact at Fowler Smith, the broker BRIK uses for its own mortgages and protection.",phone:"01206 635 550",tel2:"",email:"tjohn@fowlersmith.co.uk"},rfb:{logo:"img2/rfb-logo.webp",logoFit:"light"},pfr:{logo:"img2/pfr-logo.webp",logoFit:"dark"}};
+const PFIX={fowler:{name:"Fowler Smith",role:"The broker BRIK uses for its own mortgages and protection.",phone:"01206 635 550",tel2:"",email:"info@fowlersmith.co.uk"},rfb:{logo:"img2/rfb-logo.webp",logoFit:"light"},pfr:{logo:"img2/pfr-logo.webp",logoFit:"dark"}};
 S.partners=PARTNERS0.slice();S.pRemoved=[];
 const PCATS=[["Mortgages","Our mortgage partner for your buyers, from buy to let to residential.","img2/pl-hat.jpg"],
   ["Conveyancing","Solicitors who already know our schemes, so the contract pack is read quickly and exchange lands on time.","img2/pl-archstreet.jpg"],
@@ -2272,8 +2271,8 @@ function brandStrip(){const b=brandNow();
    <p>${b.company||b.consultant?`Documents are branded <b>${esc([b.consultant,b.company].filter(Boolean).join(", "))}</b>`:"Documents will carry your name until you add your branding."}<small>${b.logo?"Your logo and details go on every document below.":"Add your logo once in your profile and it appears on every document."}</small></p>
    <a class="link" href="#profile">${b.logo?"Edit profile":"Set up profile"} →</a></div>`}
 function pfPreview(){const b=brandNow();
-  return `<div class="pcover"><img src="img2/ch-corner.jpg" alt=""><div class="plogo">${b.logo?`<img src="${b.logo}" alt="">`:`<span>${esc(b.company||"Your logo")}</span>`}</div>
-   <div class="pc"><small>An investment proposal</small><b>Charter House</b><i>${esc(b.consultant||b.company?"Prepared by "+[b.consultant,b.company].filter(Boolean).join(", "):"Prepared by you")}</i></div></div>
+  return `<div class="pcover"><img src="img2/ph-front.jpg" alt=""><div class="plogo">${b.logo?`<img src="${b.logo}" alt="">`:`<span>${esc(b.company||"Your logo")}</span>`}</div>
+   <div class="pc"><small>An investment proposal</small><b>The Print House</b><i>${esc(b.consultant||b.company?"Prepared by "+[b.consultant,b.company].filter(Boolean).join(", "):"Prepared by you")}</i></div></div>
    <p class="pvcap">How your branding sits on a proposal cover</p>`}
 function vProfile(){const b=S.brand,s=S.session;
   return `<main>

@@ -32,8 +32,8 @@ function vSignin(){
 
 /* ---------- first visit from an invite: set up the profile, then in ---------- */
 function joinPreview(){const who=[J.name,J.company].filter(Boolean).join(", ");
-  return `<div class="pcover"><img src="img2/ch-corner.jpg" alt=""><div class="plogo">${J.logo?`<img src="${J.logo}" alt="">`:`<span>${esc(J.company||"Your logo")}</span>`}</div>
-   <div class="pc"><small>An investment proposal</small><b>Charter House</b><i>${esc(who?"Prepared by "+who:"Prepared by you")}</i></div></div>
+  return `<div class="pcover"><img src="img2/ph-front.jpg" alt=""><div class="plogo">${J.logo?`<img src="${J.logo}" alt="">`:`<span>${esc(J.company||"Your logo")}</span>`}</div>
+   <div class="pc"><small>An investment proposal</small><b>The Print House</b><i>${esc(who?"Prepared by "+who:"Prepared by you")}</i></div></div>
    <p class="pvcap" style="color:rgba(255,255,255,.6)">Your branding on a proposal cover</p>`}
 function vJoin(){
   return `<section class="signin hx-join"><div class="grid">

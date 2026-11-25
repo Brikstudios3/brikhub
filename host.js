@@ -98,7 +98,7 @@ H.publish=async(extraFiles=[],msg)=>{if(publishing){clearTimeout(pubTimer);pubTi
   try{let a;try{a=await latestAdmin();a.token=a.token||H.admin.token}catch(e){if(e.code==="bad_token")throw e;a=clone(H.admin)}
     ops.forEach(op=>applyOp(a,op));
     const L=a.listing||{};const K=ub64(a.K);const key=await rawKey(K);
-    const listed=(a.units||[]).filter(u=>listedFor(u,L));
+    const hide=typeof HIDDEN_SCHEMES!=="undefined"?HIDDEN_SCHEMES:[];const listed=(a.units||[]).filter(u=>!hide.includes(u.scheme)&&listedFor(u,L));
     const pubListing={};listed.forEach(u=>{(pubListing[u.scheme]=pubListing[u.scheme]||{units:{}}).units[u.id]=true});
     const priv=await seal(key,enc.encode(JSON.stringify({units:listed,listing:pubListing,bank:a.bank||null,at:new Date().toISOString()})));
     const invites={};for(const iv of (a.invites||[]).filter(x=>!x.revoked))invites[await sha(iv.code)]=await wrapK(iv.code,K);
